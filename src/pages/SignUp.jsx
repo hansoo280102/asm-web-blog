@@ -2,6 +2,8 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -17,7 +19,10 @@ export default function SignUp() {
     // send data to server
     // clear form data
     if (!formData.username || !formData.email || !formData.password) {
-      return setErrorMessage("Please enter all fields");
+      toast.error("Please enter all fields", {
+        onClose: () => setLoading(false), // Khi toast bị đóng
+      });
+      return;
     }
 
     try {
@@ -30,20 +35,26 @@ export default function SignUp() {
       });
       const data = await res.json();
       if (data.success === false) {
-        return setErrorMessage(data.message);
+        toast.error(data.message, {
+          onClose: () => setLoading(false), // Khi toast bị đóng
+        });
+        return;
       }
       setLoading(false);
       if (res.ok) {
         navigate("/sign-in");
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      toast.error(error.message, {
+        onClose: () => setLoading(false), // Khi toast bị đóng
+      });
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen mt-20">
+      <ToastContainer />
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left side */}
         <div className="flex-1">
@@ -107,11 +118,6 @@ export default function SignUp() {
               Sign in
             </Link>
           </div>
-          {errorMessage && (
-            <Alert className="mt-5" color="failure">
-              {errorMessage}
-            </Alert>
-          )}
         </div>
       </div>
     </div>
