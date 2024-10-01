@@ -19,6 +19,7 @@ export default function SignUp() {
     if (!formData.username || !formData.email || !formData.password) {
       return setErrorMessage("Please enter all fields");
     }
+
     try {
       setLoading(true);
       setErrorMessage(null);
