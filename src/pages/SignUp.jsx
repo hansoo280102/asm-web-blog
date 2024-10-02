@@ -19,10 +19,7 @@ export default function SignUp() {
     // send data to server
     // clear form data
     if (!formData.username || !formData.email || !formData.password) {
-      toast.error("Please enter all fields", {
-        onClose: () => setLoading(false), // Khi toast bị đóng
-      });
-      return;
+      return setErrorMessage("Please fill out all fields.");
     }
 
     try {
@@ -35,19 +32,14 @@ export default function SignUp() {
       });
       const data = await res.json();
       if (data.success === false) {
-        toast.error(data.message, {
-          onClose: () => setLoading(false), // Khi toast bị đóng
-        });
-        return;
+        return setErrorMessage(data.message);
       }
       setLoading(false);
       if (res.ok) {
         navigate("/sign-in");
       }
     } catch (error) {
-      toast.error(error.message, {
-        onClose: () => setLoading(false), // Khi toast bị đóng
-      });
+      setErrorMessage(error.message);
       setLoading(false);
     }
   };
@@ -118,6 +110,11 @@ export default function SignUp() {
               Sign in
             </Link>
           </div>
+          {errorMessage && (
+            <Alert className="mt-5" color="failure">
+              {errorMessage}
+            </Alert>
+          )}
         </div>
       </div>
     </div>
