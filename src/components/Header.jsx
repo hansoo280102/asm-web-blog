@@ -61,6 +61,23 @@ export default function Header() {
             </Link>
             <Dropdown.Divider />
             <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Divider />
+
+            {/* Thêm nút chuyển đổi Dark/Light mode vào Dropdown */}
+            <Dropdown.Item
+              className="sm:hidden "
+              onClick={() => dispatch(toggleTheme())}
+            >
+              {theme === "light" ? (
+                <div className="flex items-center">
+                  <FaMoon className="mr-2" /> Dark Mode
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <FaSun className="mr-2" /> Light Mode
+                </div>
+              )}
+            </Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to="/sign-in">
