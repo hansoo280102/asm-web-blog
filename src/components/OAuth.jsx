@@ -30,6 +30,12 @@ export default function OAuth() {
       if (res.ok) {
         dispatch(signInSuccess(data));
         navigate("/");
+      } else if (data.error === "Account already exists") {
+        alert("Account already exists");
+      } else if (data.error === "Account does not exist") {
+        alert("Account does not exist");
+      } else {
+        alert("Sign in fail! Please try again.");
       }
     } catch (error) {
       console.log(error);
