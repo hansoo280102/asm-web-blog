@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Button } from "flowbite-react";
 import { AiFillGoogleCircle } from "react-icons/ai";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
@@ -10,6 +10,8 @@ import { signInSuccess } from "../redux/user/userSlice";
 export default function OAuth() {
   const dispatch = useDispatch();
   const auth = getAuth(app);
+  const navigate = useNavigate();
+
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account " });
@@ -27,7 +29,7 @@ export default function OAuth() {
       const data = await res.json();
       if (res.ok) {
         dispatch(signInSuccess(data));
-        Navigate("/");
+        navigate("/");
       }
     } catch (error) {
       console.log(error);
