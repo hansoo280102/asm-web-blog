@@ -66,17 +66,15 @@ export default function DashSidebar() {
             </Link>
           )}
 
-          {currentUser.role === "user" && (
-            <Link to="/dashboard?tab=posts">
-              <Sidebar.Item
-                active={tab === "posts"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                My Posts
-              </Sidebar.Item>
-            </Link>
-          )}
+          <Link to="/dashboard?tab=myposts">
+            <Sidebar.Item
+              active={tab === "myposts"}
+              icon={HiDocumentText}
+              as="div"
+            >
+              My Posts
+            </Sidebar.Item>
+          </Link>
 
           <Sidebar.Item
             icon={HiArrowSmRight}
