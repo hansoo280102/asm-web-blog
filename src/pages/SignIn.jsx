@@ -21,36 +21,37 @@ export default function SignIn() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // send data to server
-    // clear form data
+
     if (!formData.email || !formData.password) {
-      // toast.error("Please enter all fields", {
-      //   onClose: () => setLoading(false), // Khi toast bị đóng
-      // });
-      // return;
       return dispatch(signInFailure("Please enter all fields"));
     }
 
     try {
       dispatch(signInStart());
+
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
       const data = await res.json();
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
+
+      // Nếu đăng nhập thất bại
+      if (!res.ok || data.success === false) {
+        // Đảm bảo thoát khỏi hàm nếu có lỗi và dispatch signInFailure
+        return dispatch(signInFailure(data.message || "Login failed"));
       }
 
-      if (res.ok) {
-        dispatch(signInSuccess(data));
-        navigate("/");
-      }
+      // Nếu đăng nhập thành công
+      dispatch(signInSuccess(data));
+      navigate("/");
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      // Bắt lỗi từ phía server hoặc mạng và dispatch signInFailure
+      return dispatch(signInFailure(error.message));
     }
   };
 
