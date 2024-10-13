@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
-  console.log(currentUser.role);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -21,6 +21,9 @@ export default function DashPosts() {
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
+          if (data.posts.length < 9) {
+            setShowMore(false);
+          }
         }
       } catch (error) {
         console.log(error.message);
@@ -30,6 +33,27 @@ export default function DashPosts() {
       fetchPosts();
     }
   }, [currentUser]);
+
+  const handleShowMore = async () => {
+    try {
+      const startIndex = userPosts.length; // Chỉ số bắt đầu là độ dài hiện tại của userPosts
+      const url =
+        currentUser.role === "admin"
+          ? `/api/post/getposts?startIndex=${startIndex}`
+          : `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok) {
+        setUserPosts((prevPosts) => [...prevPosts, ...data.posts]); // Kết hợp bài viết mới với bài viết cũ
+        if (data.posts.length < 9) {
+          setShowMore(false); // Nếu bài viết mới lấy về ít hơn 9, ẩn nút "Show more"
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 ">
@@ -90,6 +114,14 @@ export default function DashPosts() {
               ))}
             </Table.Body>
           </Table>
+          {showMore && (
+            <button
+              onClick={handleShowMore}
+              className="w-full text-teal-500 self-center text-sm py-7"
+            >
+              Show more
+            </button>
+          )}
         </>
       ) : (
         <p>You have no post yet.</p>
