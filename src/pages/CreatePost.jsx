@@ -5,7 +5,7 @@ import {
   ref,
   uploadBytesResumable,
 } from "@firebase/storage";
-import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
+import { Alert, Button, FileInput, TextInput } from "flowbite-react";
 import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -15,14 +15,12 @@ import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
-
-  console.log(formData);
 
   const handleUploadImage = async () => {
     try {
@@ -43,7 +41,7 @@ export default function CreatePost() {
           setImageUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          setImageUploadError("Please select a image");
+          setImageUploadError("Please select an image");
           setImageUploadProgress(null);
         },
         () => {
@@ -98,20 +96,20 @@ export default function CreatePost() {
               setFormData({ ...formData, title: e.target.value })
             }
           />
-          <Select
+          <TextInput
+            type="text"
+            placeholder="Category"
+            required
+            id="category"
+            className="flex-1"
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
-          >
-            <option value="uncategorized">Select a category</option>
-            <option value="IT">IT</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Design">Design</option>
-          </Select>
+          />
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
-            type="type"
+            type="file"
             accept="image/*"
             onChange={(e) => setFile(e.target.files[0])}
           />
