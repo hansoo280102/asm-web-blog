@@ -2,9 +2,10 @@
 import { Button, Modal, Select, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import CSS của Toastify
+import { signOutSuccess } from "../redux/user/userSlice";
 
 export default function DashUsers() {
   const { currentUser } = useSelector((state) => state.user);
@@ -13,6 +14,7 @@ export default function DashUsers() {
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
   const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -53,6 +55,22 @@ export default function DashUsers() {
       }
     } catch (error) {
       console.log("Error fetching more users:", error.message);
+    }
+  };
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -137,6 +155,9 @@ export default function DashUsers() {
           draggable: true,
           progress: undefined,
         });
+        if (user._id === currentUser._id && newRole !== "admin") {
+          handleSignout();
+        }
       } else {
         // Hiển thị thông báo lỗi
         toast.error(`Failed to change role: ${data.message}`, {
