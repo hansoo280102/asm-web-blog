@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { Button, Textarea } from "flowbite-react";
 
 /* eslint-disable no-unused-vars */
-export default function Comment({ comment, onLike, onEdit }) {
+export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const { currentUser } = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({});
@@ -116,16 +116,29 @@ export default function Comment({ comment, onLike, onEdit }) {
                     " " +
                     (comment.numberOfLikes === 1 ? "like" : "likes")}
               </p>
-              {((currentUser && currentUser._id === comment.userId) ||
-                currentUser.role === "admin") && (
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="text-gray-400 hover:text-blue-500"
-                >
-                  Edit
-                </button>
-              )}
+              {currentUser &&
+                (currentUser._id === comment.userId || // Người dùng là chủ của bình luận
+                  (currentUser.role === "admin" &&
+                    currentUser._id !== comment.userId)) && ( // Admin không thể chỉnh sửa bình luận của người khác
+                  <>
+                    {currentUser._id === comment.userId && (
+                      <button
+                        type="button"
+                        onClick={handleEdit}
+                        className="text-gray-400 hover:text-blue-500"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => onDelete(comment._id)}
+                      className="text-gray-400 hover:text-red-500"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
             </div>
           </>
         )}
