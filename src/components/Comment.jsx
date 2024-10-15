@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react";
+import { FaThumbsUp } from "react-icons/fa";
 import moment from "moment";
+import { useSelector } from "react-redux";
 
 /* eslint-disable no-unused-vars */
-export default function Comment({ comment }) {
+export default function Comment({ comment, onLike }) {
+  const { currentUser } = useSelector((state) => state.user);
   const [user, setUser] = useState({});
   console.log(user);
   useEffect(() => {
@@ -40,6 +43,25 @@ export default function Comment({ comment }) {
           </span>
         </div>
         <p className="text-gray-500 pb-2">{comment.content}</p>
+        <div>
+          <button
+            type="button"
+            onClick={() => onLike(comment._id)}
+            className={`text-gray-400 hover:text-blue-500 ${
+              currentUser &&
+              comment.likes.includes(currentUser._id) &&
+              "!text-blue-500"
+            }`}
+          >
+            <FaThumbsUp className="text-sm" />
+          </button>
+          <p className="text-gray-400">
+            {comment.numberOfLikes > 0 &&
+              comment.numberOfLikes +
+                " " +
+                (comment.numberOfLikes === 1 ? "like" : "likes")}
+          </p>
+        </div>
       </div>
     </div>
   );
