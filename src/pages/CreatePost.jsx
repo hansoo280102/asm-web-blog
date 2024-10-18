@@ -15,47 +15,54 @@ import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
-  const [file, setFile] = useState(null);
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
+  const [file, setFile] = useState(null); // Chỉ một state cho cả ảnh và tài liệu
+  const [uploadProgress, setUploadProgress] = useState(null); // Trạng thái upload
+  const [uploadError, setUploadError] = useState(null); // Lỗi upload
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
 
-  const handleUploadImage = async () => {
+  // Hàm upload file (hình ảnh hoặc tài liệu)
+  const handleUploadFile = async () => {
     try {
       if (!file) {
-        setImageUploadError("No file selected");
+        setUploadError("No file selected");
         return;
       }
-      setImageUploadError(null);
+      setUploadError(null);
       const storage = getStorage(app);
       const fileName = new Date().getTime() + "-" + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
+          setUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          setImageUploadError("Please select an image");
-          setImageUploadProgress(null);
+          setUploadError("File upload failed");
+          setUploadProgress(null);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
+            setUploadProgress(null);
+            setUploadError(null);
+
+            // Kiểm tra loại file để lưu vào formData
+            if (file.type.startsWith("image/")) {
+              setFormData({ ...formData, image: downloadURL }); // Lưu đường dẫn ảnh
+            } else {
+              setFormData({ ...formData, document: downloadURL }); // Lưu đường dẫn tài liệu
+            }
           });
         }
       );
     } catch (error) {
-      setImageUploadError("Image upload failed");
-      setImageUploadProgress(null);
-      console.log(error);
+      setUploadError("File upload failed");
+      setUploadProgress(null);
     }
   };
 
@@ -82,7 +89,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="p-3 max-2-3xl mx-auto min-h-screen">
+    <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
@@ -107,10 +114,12 @@ export default function CreatePost() {
             }
           />
         </div>
+
+        {/* Chọn file (hình ảnh hoặc tài liệu) */}
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
             type="file"
-            accept="image/*"
+            accept="image/*,.pdf,.doc,.docx" // Chấp nhận cả ảnh và tài liệu
             onChange={(e) => setFile(e.target.files[0])}
           />
           <Button
@@ -118,29 +127,38 @@ export default function CreatePost() {
             gradientDuoTone="purpleToBlue"
             size="sm"
             outline
-            onClick={handleUploadImage}
-            disabled={imageUploadProgress}
+            onClick={handleUploadFile}
+            disabled={uploadProgress}
           >
-            {imageUploadProgress ? (
+            {uploadProgress ? (
               <div className="w-16 h-16">
                 <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
+                  value={uploadProgress}
+                  text={`${uploadProgress || 0}%`}
                 />
               </div>
             ) : (
-              "Upload Image"
+              "Upload"
             )}
           </Button>
         </div>
-        {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
+
+        {uploadError && <Alert color="failure">{uploadError}</Alert>}
+
+        {/* Hiển thị preview ảnh hoặc đường dẫn tài liệu sau khi upload */}
         {formData.image && (
           <img
             src={formData.image}
-            alt="update"
+            alt="Uploaded"
             className="w-full h-72 object-cover "
           />
         )}
+        {formData.document && (
+          <a href={formData.document} target="_blank" rel="noopener noreferrer">
+            View uploaded document
+          </a>
+        )}
+
         <ReactQuill
           theme="snow"
           className="dark:text-white h-72 mb-12"

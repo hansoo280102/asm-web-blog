@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+
 import { Link, useParams } from "react-router-dom";
-import { Button, Spinner } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
+import { useEffect, useState } from "react";
+import { Button, Spinner } from "flowbite-react";
 import PostCard from "../components/PostCard";
 
 export default function PostPage() {
@@ -58,6 +59,7 @@ export default function PostPage() {
         <Spinner size="xl"></Spinner>
       </div>
     );
+
   return (
     <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
       <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl">
@@ -84,6 +86,21 @@ export default function PostPage() {
         className="p-3 max-w-2xl mx-auto w-full post-content"
         dangerouslySetInnerHTML={{ __html: post && post.content }}
       ></div>
+
+      {/* Hiển thị document nếu có */}
+      {post && post.document && (
+        <div className="p-3 max-w-2xl mx-auto w-full">
+          <a
+            href={post.document}
+            className="text-blue-500 underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download attached document
+          </a>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto w-full">
         <CallToAction />
       </div>
