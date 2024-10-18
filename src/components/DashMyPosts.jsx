@@ -83,17 +83,21 @@ export default function DashMyPosts() {
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {userPosts.length > 0 ? ( // Hiển thị bài viết nếu có
         <>
-          {" "}
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date uploaded</Table.HeadCell>
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post title</Table.HeadCell>
               <Table.HeadCell>Major</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
-              <Table.HeadCell>
-                <span>Edit</span>
-              </Table.HeadCell>
+              <Table.HeadCell>Status</Table.HeadCell> {/* Thêm cột Status */}
+              {userPosts.some((post) => post.status === "pending") ? null : ( // Kiểm tra trạng thái bài viết
+                <>
+                  <Table.HeadCell>Delete</Table.HeadCell>
+                  <Table.HeadCell>
+                    <span>Edit</span>
+                  </Table.HeadCell>
+                </>
+              )}
             </Table.Head>
             <Table.Body className="divide-y">
               {userPosts.map((post) => (
@@ -122,25 +126,30 @@ export default function DashMyPosts() {
                     </Link>
                   </Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
-                  <Table.Cell>
-                    <span
-                      onClick={() => {
-                        setShowModal(true);
-                        setPostIdToDelete(post._id);
-                      }}
-                      className="font-medium text-red-500 hover:underline cursor-pointer"
-                    >
-                      Delete
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      className="text-teal-500 hover:underline"
-                      to={`/update-post/${post._id}`}
-                    >
-                      <span>Edit</span>
-                    </Link>
-                  </Table.Cell>
+                  <Table.Cell>{post.status}</Table.Cell> {/* Hiển thị status */}
+                  {post.status !== "pending" && ( // Chỉ hiển thị cột Delete nếu status không phải là "pending"
+                    <Table.Cell>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setPostIdToDelete(post._id);
+                        }}
+                        className="font-medium text-red-500 hover:underline cursor-pointer"
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+                  )}
+                  {post.status !== "pending" && ( // Chỉ hiển thị cột Edit nếu status không phải là "pending"
+                    <Table.Cell>
+                      <Link
+                        className="text-teal-500 hover:underline"
+                        to={`/update-post/${post._id}`}
+                      >
+                        <span>Edit</span>
+                      </Link>
+                    </Table.Cell>
+                  )}
                 </Table.Row>
               ))}
             </Table.Body>

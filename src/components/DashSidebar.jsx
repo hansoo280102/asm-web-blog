@@ -106,6 +106,18 @@ export default function DashSidebar() {
             </Link>
           )}
 
+          {currentUser.role !== "user" && (
+            <Link to="/dashboard?tab=dashmor">
+              <Sidebar.Item
+                active={tab === "dashmor"}
+                icon={HiOutlineUserGroup}
+                as="div"
+              >
+                Post Moderation
+              </Sidebar.Item>
+            </Link>
+          )}
+
           <Sidebar.Item
             icon={HiArrowSmRight}
             className="cursor-pointer"
