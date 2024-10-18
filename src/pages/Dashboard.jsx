@@ -8,6 +8,7 @@ import DashMyPosts from "../components/DashMyPosts";
 import DashUsers from "../components/DashUsers";
 import DashboardComp from "../components/DashboardComp";
 import DashMorderation from "../components/DashMorderation";
+import DashComments from "../components/DashComments";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -33,6 +34,8 @@ export default function Dashboard() {
       {tab === "myposts" && <DashMyPosts />}
       {/* get users , only admin role */}
       {tab === "users" && <DashUsers />}
+      {/* dashboard comp */}
+      {tab === "comments" && <DashComments />}
       {/* dashboard comp */}
       {tab === "dash" && <DashboardComp />}
       {/* dashboard comp */}
