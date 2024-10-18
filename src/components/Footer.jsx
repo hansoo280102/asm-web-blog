@@ -31,7 +31,7 @@ export default function FooterCom() {
                 >
                   My School
                 </Footer.Link>
-                <Footer.Link href="/about">About my team</Footer.Link>
+                <Footer.Link href="/about">About</Footer.Link>
               </Footer.LinkGroup>
             </div>
 

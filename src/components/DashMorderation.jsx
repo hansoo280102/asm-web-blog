@@ -61,7 +61,7 @@ export default function DashMorderation() {
               <Table.HeadCell>Date uploaded</Table.HeadCell>
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>{" "}
+              <Table.HeadCell>Course</Table.HeadCell>{" "}
               {/* Sửa tiêu đề từ "Major" thành "Category" */}
               <Table.HeadCell>Action</Table.HeadCell>
             </Table.Head>
@@ -75,7 +75,7 @@ export default function DashMorderation() {
                     {new Date(post.updatedAt).toLocaleDateString()}
                   </Table.Cell>
                   <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
+                    <Link to={`/pending-post/${post._id}`}>
                       <img
                         src={post.image}
                         alt={post.title}

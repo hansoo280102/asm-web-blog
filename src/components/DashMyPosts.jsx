@@ -140,7 +140,7 @@ export default function DashMyPosts() {
                       </span>
                     </Table.Cell>
                   )}
-                  {post.status !== "pending" && ( // Chỉ hiển thị cột Edit nếu status không phải là "pending"
+                  {post.status === "approved" && (
                     <Table.Cell>
                       <Link
                         className="text-teal-500 hover:underline"
