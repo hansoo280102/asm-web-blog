@@ -17,6 +17,7 @@ export default function Header() {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const queryString = location.search;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -139,10 +140,24 @@ export default function Header() {
         <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === "/about"} as={"div"}>
+
+        <Navbar.Link
+          active={path === "/dashboard" && queryString === "?tab=myposts"}
+          as={"div"}
+        >
           <Link to="/dashboard?tab=myposts">My Posts</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === "/projects"} as={"div"}>
+
+        {currentUser.role === "admin" && (
+          <Navbar.Link
+            active={path === "/dashboard" && queryString === "?tab=dash"}
+            as={"div"}
+          >
+            <Link to="/dashboard?tab=dash">DashBoard</Link>
+          </Navbar.Link>
+        )}
+
+        <Navbar.Link active={path === "/about"} as={"div"}>
           <Link to="/about">About</Link>
         </Navbar.Link>
       </Navbar.Collapse>
