@@ -9,6 +9,7 @@ import DashUsers from "../components/DashUsers";
 import DashboardComp from "../components/DashboardComp";
 import DashMorderation from "../components/DashMorderation";
 import DashComments from "../components/DashComments";
+import ChartPost from "../components/ChartPost";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -40,6 +41,8 @@ export default function Dashboard() {
       {tab === "dash" && <DashboardComp />}
       {/* dashboard comp */}
       {tab === "dashmor" && <DashMorderation />}
+      {/* dashboard comp */}
+      {tab === "chartpost" && <ChartPost />}
     </div>
   );
 }

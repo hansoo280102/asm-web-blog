@@ -9,6 +9,7 @@ import {
 } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ChartPost from "./ChartPost";
 
 export default function DashboardComp() {
   const [users, setUsers] = useState([]);
@@ -121,6 +122,12 @@ export default function DashboardComp() {
             </span>
             <div className="text-gray-500">Last month</div>
           </div>
+        </div>
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
+          <div className="flex justify-between">
+            <h3 className="text-gray-500 text-md uppercase">Post Statistics</h3>
+          </div>
+          <ChartPost />
         </div>
       </div>
       <div className="flex flex-wrap gap-4 py-3 mx-auto justify-center">

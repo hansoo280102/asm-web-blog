@@ -148,15 +148,6 @@ export default function Header() {
           <Link to="/dashboard?tab=myposts">My Posts</Link>
         </Navbar.Link>
 
-        {currentUser.role === "admin" && (
-          <Navbar.Link
-            active={path === "/dashboard" && queryString === "?tab=dash"}
-            as={"div"}
-          >
-            <Link to="/dashboard?tab=dash">DashBoard</Link>
-          </Navbar.Link>
-        )}
-
         <Navbar.Link active={path === "/about"} as={"div"}>
           <Link to="/about">About</Link>
         </Navbar.Link>
