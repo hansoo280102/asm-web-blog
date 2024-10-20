@@ -97,6 +97,19 @@ export default function PendingPostPage() {
         dangerouslySetInnerHTML={{ __html: post.content }}
       ></div>
 
+      {post.document && (
+        <div className="p-3 max-w-2xl mx-auto w-full">
+          <a
+            href={post.document}
+            className="text-blue-500 underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download attached document
+          </a>
+        </div>
+      )}
+
       {/* Nút Approve và Reject */}
       <div className="flex justify-center p-3 gap-4">
         <Button onClick={handleApprove} color="success">
