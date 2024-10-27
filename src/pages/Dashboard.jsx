@@ -10,6 +10,7 @@ import DashboardComp from "../components/DashboardComp";
 import DashMorderation from "../components/DashMorderation";
 import DashComments from "../components/DashComments";
 import ChartPost from "../components/ChartPost";
+import DashSidebarMobile from "../components/DashSidebarMobile";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -25,7 +26,13 @@ export default function Dashboard() {
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="md:w-56">
         {/* Sidebar */}
-        <DashSidebar />
+        <div className="hidden md:block">
+          <DashSidebar />
+        </div>
+        {/* Hiển thị DashSidebarMobile ở điện thoại và ẩn ở iPad trở lên */}
+        <div className="md:hidden">
+          <DashSidebarMobile />
+        </div>
       </div>
       {/* profile */}
       {tab === "profile" && <DashProfile />}

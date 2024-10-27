@@ -67,14 +67,24 @@ export default function Header() {
           type="text"
           placeholder="Search..."
           rightIcon={IoSearchOutline}
-          className="hidden lg:inline"
+          className="hidden lg:inline" // Hiển thị ở chế độ lg trở lên
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <Button
+          className="w-12 h-10 lg:hidden rounded-full"
+          color="gray"
+          onClick={() => {
+            const urlParams = new URLSearchParams(location.search);
+            urlParams.set("searchTerm", searchTerm);
+            const searchQuery = urlParams.toString();
+            navigate(`/search?${searchQuery}`);
+          }}
+        >
+          <IoSearchOutline />
+        </Button>
       </form>
-      <Button className="w-12 h-10 lg:hidden rounded-full" color="gray">
-        <IoSearchOutline />
-      </Button>
+
       <div className="flex gap-2 md:order-2">
         <Button
           className="w-12 h-10 hidden sm:inline "
@@ -139,6 +149,13 @@ export default function Header() {
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
+        </Navbar.Link>
+
+        <Navbar.Link
+          active={path === "/dashboard" && queryString === "?tab=myposts"}
+          as={"div"}
+        >
+          <Link to="/dashboard?tab=myposts">My Posts</Link>
         </Navbar.Link>
 
         <Navbar.Link

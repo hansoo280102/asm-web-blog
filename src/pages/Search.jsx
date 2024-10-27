@@ -7,7 +7,7 @@ export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
     sort: "desc",
-    category: "uncategorized",
+    category: "",
   });
 
   console.log(sidebarData);
