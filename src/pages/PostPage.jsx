@@ -190,8 +190,8 @@ export default function PostPage() {
         <button
           onClick={handleLikePost}
           disabled={likeLoading} // Vô hiệu hóa nút khi đang xử lý
-          className={`text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
-            liked ? "bg-blue-500 text-white" : ""
+          className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+            liked ? "bg-blue-500 text-white" : "bg-white"
           }`}
         >
           {likeLoading ? "Loading..." : liked ? "Liked" : "Like"} ({likeCount})
@@ -199,8 +199,8 @@ export default function PostPage() {
 
         <button
           onClick={handleBookmarkPost}
-          className={`text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
-            bookmarked ? "bg-blue-500 text-white" : ""
+          className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+            bookmarked ? "bg-blue-500 text-white" : "bg-white"
           }`}
         >
           {bookmarked ? "Bookmarked" : "Bookmark"}

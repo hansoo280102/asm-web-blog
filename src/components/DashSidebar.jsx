@@ -94,6 +94,16 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
 
+          <Link to="/dashboard?tab=bookmark">
+            <Sidebar.Item
+              active={tab === "bookmark"}
+              icon={HiOutlineDocumentText}
+              as="div"
+            >
+              Bookmark
+            </Sidebar.Item>
+          </Link>
+
           {currentUser.role === "admin" && (
             <Link to="/dashboard?tab=comments">
               <Sidebar.Item

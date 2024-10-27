@@ -11,6 +11,7 @@ import DashMorderation from "../components/DashMorderation";
 import DashComments from "../components/DashComments";
 import ChartPost from "../components/ChartPost";
 import DashSidebarMobile from "../components/DashSidebarMobile";
+import DashBookmark from "../components/DashBookmark";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -50,6 +51,8 @@ export default function Dashboard() {
       {tab === "dashmor" && <DashMorderation />}
       {/* dashboard comp */}
       {tab === "chartpost" && <ChartPost />}
+      {/* dashboard bookmark */}
+      {tab === "bookmark" && <DashBookmark />}
     </div>
   );
 }
