@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-
 import { Link, useParams } from "react-router-dom";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
@@ -13,6 +12,10 @@ export default function PostPage() {
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [likeLoading, setLikeLoading] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -25,40 +28,122 @@ export default function PostPage() {
           setLoading(false);
           return;
         }
-        if (res.ok) {
-          setPost(data.posts[0]);
-          setLoading(false);
-          setError(false);
-        }
+
+        setPost(data.posts[0]);
+        setLikeCount(data.posts[0].numberOfLikes); // Cập nhật số lượng like ban đầu
+
+        const userId = localStorage.getItem("userId");
+        const likedFromStorage = JSON.parse(
+          localStorage.getItem(`liked-${data.posts[0]._id}-${userId}`)
+        );
+        const bookmarkedFromStorage = JSON.parse(
+          localStorage.getItem(`bookmarked-${data.posts[0]._id}-${userId}`)
+        );
+
+        setLiked(likedFromStorage || false);
+        setBookmarked(bookmarkedFromStorage || false);
       } catch (error) {
         setError(true);
+      } finally {
         setLoading(false);
       }
     };
+
     fetchPost();
   }, [postSlug]);
 
   useEffect(() => {
-    try {
-      const fetchRecentPosts = async () => {
+    const fetchRecentPosts = async () => {
+      try {
         const res = await fetch(`/api/post/getposts?limit=3`);
         const data = await res.json();
         if (res.ok) {
           setRecentPosts(data.posts);
         }
-      };
-      fetchRecentPosts();
-    } catch (error) {
-      console.log(error.message);
-    }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchRecentPosts();
   }, []);
 
-  if (loading)
+  const handleLikePost = async () => {
+    const userId = localStorage.getItem("userId");
+    setLikeLoading(true);
+
+    // Cập nhật trạng thái liked và likeCount ngay lập tức
+    const newLikedStatus = !liked;
+    const newLikeCount = newLikedStatus ? likeCount + 1 : likeCount - 1;
+
+    setLiked(newLikedStatus); // Cập nhật trạng thái liked
+    setLikeCount(newLikeCount); // Cập nhật số lượng like ngay lập tức
+
+    // Lưu trạng thái vào localStorage
+    localStorage.setItem(
+      `liked-${post?._id}-${userId}`,
+      JSON.stringify(newLikedStatus)
+    );
+
+    try {
+      const res = await fetch(`/api/post/like/${post?._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Cập nhật lại likeCount từ phản hồi
+        setLikeCount(data.numberOfLikes); // Sử dụng số lượng like từ phản hồi
+      } else {
+        // Nếu có lỗi, quay lại trạng thái trước đó
+        setLiked(liked); // Khôi phục trạng thái liked
+        setLikeCount(likeCount); // Khôi phục số lượng like
+      }
+    } catch (error) {
+      console.error("Error liking post:", error);
+      // Khôi phục trạng thái nếu có lỗi
+      setLiked(liked);
+      setLikeCount(likeCount);
+    } finally {
+      setLikeLoading(false);
+    }
+  };
+
+  const handleBookmarkPost = async () => {
+    const userId = localStorage.getItem("userId");
+    setLikeLoading(true);
+    try {
+      const res = await fetch(`/api/post/bookmark/${post?._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBookmarked(!bookmarked); // Đảo ngược trạng thái bookmarked
+
+        // Lưu trạng thái bookmarked vào localStorage cho người dùng
+        localStorage.setItem(
+          `bookmarked-${post?._id}-${userId}`,
+          JSON.stringify(!bookmarked)
+        );
+      }
+    } catch (error) {
+      console.error("Error bookmarking post:", error);
+    } finally {
+      setLikeLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Spinner size="xl"></Spinner>
       </div>
     );
+  }
 
   return (
     <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
@@ -96,10 +181,31 @@ export default function PostPage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Download attached document
+            Download this document
           </a>
         </div>
       )}
+
+      <div className="flex items-center justify-center w-full space-x-4">
+        <button
+          onClick={handleLikePost}
+          disabled={likeLoading} // Vô hiệu hóa nút khi đang xử lý
+          className={`text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+            liked ? "bg-blue-500 text-white" : ""
+          }`}
+        >
+          {likeLoading ? "Loading..." : liked ? "Liked" : "Like"} ({likeCount})
+        </button>
+
+        <button
+          onClick={handleBookmarkPost}
+          className={`text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+            bookmarked ? "bg-blue-500 text-white" : ""
+          }`}
+        >
+          {bookmarked ? "Bookmarked" : "Bookmark"}
+        </button>
+      </div>
 
       <div className="max-w-4xl mx-auto w-full">
         <CallToAction />
@@ -107,11 +213,13 @@ export default function PostPage() {
       <div>
         <CommentSection postId={post._id} />
       </div>
-      <div className="flex flex-col justify-center items-center mb-5 ">
+      <div className="flex flex-col justify-center items-center mb-5">
         <h1 className="text-x mt-5 ">Recent Articles</h1>
         <div className="flex flex-wrap gap-5 mt-5 justify-center">
           {recentPosts &&
-            recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+            recentPosts.map((recentPost) => (
+              <PostCard key={recentPost._id} post={recentPost} />
+            ))}
         </div>
       </div>
     </main>
