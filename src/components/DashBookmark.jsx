@@ -1,6 +1,5 @@
-import { Button, Modal, Table } from "flowbite-react";
+import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -8,7 +7,6 @@ export default function DashBookmark() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchBookmarkedPosts = async () => {
