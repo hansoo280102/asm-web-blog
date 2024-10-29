@@ -8,11 +8,12 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "asm-greenwich-sblog.firebaseapp.com",
-  projectId: "asm-greenwich-sblog",
-  storageBucket: "asm-greenwich-sblog.appspot.com",
-  messagingSenderId: "342358622331",
-  appId: "1:342358622331:web:e4c3ef4582f8b3c595a2de",
+  authDomain: "asm-final-project.firebaseapp.com",
+  projectId: "asm-final-project",
+  storageBucket: "asm-final-project.appspot.com",
+  messagingSenderId: "20306410084",
+  appId: "1:20306410084:web:78deafe7ee6f9efb49bd71",
+  measurementId: "G-ZH398X4VPR",
 };
 
 // Initialize Firebase

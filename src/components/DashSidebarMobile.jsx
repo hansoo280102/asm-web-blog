@@ -59,6 +59,8 @@ export default function DashSidebarMobile() {
         return "All Users";
       case "dashmor":
         return "Post Moderation";
+      case "bookmark":
+        return "Bookmark";
       default:
         return "Dashboard"; // Giá trị mặc định
     }
@@ -90,6 +92,15 @@ export default function DashSidebarMobile() {
               </Sidebar.Item>
             </Link>
           )}
+          <Link to="/dashboard?tab=bookmark">
+            <Sidebar.Item
+              active={tab === "bookmark"}
+              icon={HiOutlineDocumentText}
+              as="div"
+            >
+              Bookmark
+            </Sidebar.Item>
+          </Link>
           <Link to="/dashboard?tab=myposts">
             <Sidebar.Item
               active={tab === "myposts"}
