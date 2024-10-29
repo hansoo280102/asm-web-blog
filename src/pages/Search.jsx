@@ -6,11 +6,11 @@ import PostCard from "../components/PostCard";
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
-    sort: "desc",
+    sort: "desc", // Order: asc or desc
+    sortBy: "createdAt", // Default to sorting by createdAt
     category: "",
   });
 
-  console.log(sidebarData);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -22,30 +22,26 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get("searchTerm");
     const sortFromUrl = urlParams.get("sort");
+    const sortByFromUrl = urlParams.get("sortBy");
     const categoryFromUrl = urlParams.get("category");
-    if (searchTermFromUrl || sortFromUrl || categoryFromUrl) {
-      setSidebarData({
-        ...sidebarData,
-        searchTerm: searchTermFromUrl,
-        sort: sortFromUrl,
-        category: categoryFromUrl || "", // Cập nhật để sử dụng giá trị mặc định nếu không có
-      });
-    }
+
+    setSidebarData({
+      searchTerm: searchTermFromUrl || "",
+      sort: sortFromUrl || "desc",
+      sortBy: sortByFromUrl || "createdAt",
+      category: categoryFromUrl || "",
+    });
 
     const fetchPosts = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/post/getposts?${searchQuery}`);
-      if (!res.ok) {
-        setLoading(false);
-        return;
-      }
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts);
-        setLoading(false);
         setShowMore(data.posts.length === 9);
       }
+      setLoading(false);
     };
     fetchPosts();
   }, [location.search]);
@@ -63,9 +59,9 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("searchTerm", sidebarData.searchTerm);
     urlParams.set("sort", sidebarData.sort);
+    urlParams.set("sortBy", sidebarData.sortBy); // Include sortBy in URL
     urlParams.set("category", sidebarData.category);
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
+    navigate(`/search?${urlParams.toString()}`);
   };
 
   const handleShowMore = async () => {
@@ -100,14 +96,26 @@ export default function Search() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="font-semibold">Sort:</label>
-            <Select onChange={handleChange} value={sidebarData.sort} id="sort">
-              <option value="desc">Latest</option>
-              <option value="asc">Oldest</option>
+            <label className="font-semibold">Sort By:</label>
+            <Select
+              onChange={handleChange}
+              value={sidebarData.sortBy}
+              id="sortBy"
+            >
+              <option value="createdAt">Date</option>
+              <option value="numberOfLikes">Likes</option>{" "}
+              {/* New option for most liked */}
             </Select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="font-semibold">Course:</label>
+            <label className="font-semibold">Order:</label>
+            <Select onChange={handleChange} value={sidebarData.sort} id="sort">
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="font-semibold">Category:</label>
             <TextInput
               placeholder="Enter category..."
               id="category"
@@ -130,9 +138,9 @@ export default function Search() {
             <p className="text-xl text-gray-500">No posts found.</p>
           )}
           {loading && <p className="text-xl text-gray-500">Loading...</p>}
-          {!loading &&
-            posts &&
-            posts.map((post) => <PostCard key={post._id} post={post} />)}
+          {posts.map((post) => (
+            <PostCard key={post._id} post={post} />
+          ))}
           {showMore && (
             <button
               onClick={handleShowMore}
