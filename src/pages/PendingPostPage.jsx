@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
@@ -12,7 +13,9 @@ export default function PendingPostPage() {
 
   const fetchPost = async () => {
     try {
-      const res = await fetch(`/api/post/pending/${postId}`); // Lấy thông tin bài viết bằng ID
+      const res = await fetch(`/api/post/pending/${postId}`, {
+        credentials: "include",
+      }); // Lấy thông tin bài viết bằng ID
       if (res.ok) {
         const data = await res.json();
         setPost(data);
@@ -30,6 +33,7 @@ export default function PendingPostPage() {
     try {
       const res = await fetch(`/api/post/approve/${postId}`, {
         method: "PUT",
+        credentials: "include",
       });
       if (res.ok) {
         navigate("/dashboard?tab=dashmor"); // Điều hướng về trang dashboard
@@ -45,6 +49,7 @@ export default function PendingPostPage() {
     try {
       const res = await fetch(`/api/post/reject/${postId}`, {
         method: "PUT",
+        credentials: "include",
       });
       if (res.ok) {
         navigate("/dashboard?tab=dashmor"); // Điều hướng về trang dashboard

@@ -8,7 +8,7 @@ import {
   HiOutlineUserGroup,
   HiUser,
 } from "react-icons/hi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signOutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,6 +17,7 @@ export default function DashSidebarMobile() {
   const dispatch = useDispatch();
   const [tab, setTab] = useState("");
   const currentUser = useSelector((state) => state.user.currentUser);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -35,6 +36,8 @@ export default function DashSidebarMobile() {
       if (!res.ok) {
         console.log(data.message);
       } else {
+        localStorage.removeItem("userId");
+        navigate("/sign-in");
         dispatch(signOutSuccess());
       }
     } catch (error) {

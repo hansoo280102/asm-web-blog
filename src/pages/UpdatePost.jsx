@@ -29,7 +29,9 @@ export default function UpdatePost() {
   useEffect(() => {
     try {
       const fetchPost = async () => {
-        const res = await fetch(`/api/post/getposts?postId=${postId}`);
+        const res = await fetch(`/api/post/getposts?postId=${postId}`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (!res.ok) {
           console.log(data.message);
@@ -95,6 +97,7 @@ export default function UpdatePost() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
+          credentials: "include",
         }
       );
       const data = await res.json();
@@ -111,7 +114,7 @@ export default function UpdatePost() {
 
       // Nếu mọi thứ đều ổn, điều hướng người dùng tới trang bài viết
       setPublishError(null);
-      navigate(`post/${data.slug}`);
+      navigate(`/`);
     } catch (error) {
       // Xử lý lỗi nếu request gặp vấn đề
       setPublishError("Something went wrong");

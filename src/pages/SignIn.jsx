@@ -36,6 +36,7 @@ export default function SignIn() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -45,6 +46,9 @@ export default function SignIn() {
         // Đảm bảo thoát khỏi hàm nếu có lỗi và dispatch signInFailure
         return dispatch(signInFailure(data.message || "Login failed"));
       }
+
+      // Lưu userId vào localStorage
+      localStorage.setItem("userId", data.userId);
 
       // Nếu đăng nhập thành công
       dispatch(signInSuccess(data));

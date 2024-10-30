@@ -17,8 +17,7 @@ export default function SignUp() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // send data to server
-    // clear form data
+
     if (!formData.username || !formData.email || !formData.password) {
       return setErrorMessage("Please fill out all fields.");
     }
@@ -30,6 +29,7 @@ export default function SignUp() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -38,7 +38,13 @@ export default function SignUp() {
       }
 
       if (res.ok) {
-        navigate("/sign-in");
+        // Hiển thị thông báo thành công
+        toast.success(
+          "Registration successful! Navigate to sign in after 2 seconds."
+        );
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 2000);
       }
     } catch (error) {
       setErrorMessage(error.message);

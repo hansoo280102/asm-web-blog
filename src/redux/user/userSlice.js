@@ -55,6 +55,9 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    updateBookmarks: (state, action) => {
+      state.bookmarks = action.payload;
+    },
   },
 });
 
@@ -69,6 +72,7 @@ export const {
   deleteUserSuccess,
   deleteUserFailure,
   signOutSuccess,
+  updateBookmarks,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
 import { useEffect, useState } from "react";
@@ -16,7 +17,10 @@ export default function PostPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [likeLoading, setLikeLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const userId = localStorage.getItem("userId");
+  // || (user && user.id)
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -32,7 +36,6 @@ export default function PostPage() {
         setPost(data.posts[0]);
         setLikeCount(data.posts[0].numberOfLikes); // Cập nhật số lượng like ban đầu
 
-        const userId = localStorage.getItem("userId");
         const likedFromStorage = JSON.parse(
           localStorage.getItem(`liked-${data.posts[0]._id}-${userId}`)
         );
@@ -69,6 +72,7 @@ export default function PostPage() {
 
   const handleLikePost = async () => {
     const userId = localStorage.getItem("userId");
+
     setLikeLoading(true);
 
     // Cập nhật trạng thái liked và likeCount ngay lập tức
@@ -89,6 +93,7 @@ export default function PostPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -118,6 +123,7 @@ export default function PostPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -165,7 +171,9 @@ export default function PostPage() {
       />
       <div className="flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs">
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
-        <span>{post && (post.content.length / 1000).toFixed(0)} mins read</span>
+        <span>
+          {likeCount} {likeCount > 1 ? "likes" : "like"}
+        </span>
       </div>
       <div
         className="p-3 max-w-2xl mx-auto w-full post-content"
@@ -187,24 +195,29 @@ export default function PostPage() {
       )}
 
       <div className="flex items-center justify-center w-full space-x-4">
-        <button
-          onClick={handleLikePost}
-          disabled={likeLoading} // Vô hiệu hóa nút khi đang xử lý
-          className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
-            liked ? "bg-blue-500 text-white" : "bg-white"
-          }`}
-        >
-          {likeLoading ? "Loading..." : liked ? "Liked" : "Like"} ({likeCount})
-        </button>
+        {userId && (
+          <button
+            onClick={handleLikePost}
+            disabled={likeLoading}
+            className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+              liked ? "bg-blue-500 text-white" : "bg-white"
+            }`}
+          >
+            {likeLoading ? "Loading..." : liked ? "Liked" : "Like"} ({likeCount}
+            )
+          </button>
+        )}
 
-        <button
-          onClick={handleBookmarkPost}
-          className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
-            bookmarked ? "bg-blue-500 text-white" : "bg-white"
-          }`}
-        >
-          {bookmarked ? "Bookmarked" : "Bookmark"}
-        </button>
+        {userId && (
+          <button
+            onClick={handleBookmarkPost}
+            className={`text-gray-900 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
+              bookmarked ? "bg-blue-500 text-white" : "bg-white"
+            }`}
+          >
+            {bookmarked ? "Bookmarked" : "Bookmark"}
+          </button>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto w-full">

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
+
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoSearchOutline } from "react-icons/io5";
@@ -36,6 +36,8 @@ export default function Header() {
       if (!res.ok) {
         console.log(data.message);
       } else {
+        localStorage.removeItem("userId");
+        navigate("/sign-in");
         dispatch(signOutSuccess());
       }
     } catch (error) {
