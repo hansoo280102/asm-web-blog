@@ -143,6 +143,7 @@ export default function CreatePost() {
             )}
           </Button>
         </div>
+        <span className="text-xs">You can upload both image and file.</span>
 
         {uploadError && <Alert color="failure">{uploadError}</Alert>}
 
