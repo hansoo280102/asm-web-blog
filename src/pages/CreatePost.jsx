@@ -157,7 +157,7 @@ export default function CreatePost() {
         )}
         {formData.document && (
           <a href={formData.document} target="_blank" rel="noopener noreferrer">
-            View uploaded document
+            {file.name}
           </a>
         )}
 

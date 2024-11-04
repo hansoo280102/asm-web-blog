@@ -22,6 +22,8 @@ export default function UpdatePost() {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(null); // Trạng thái upload
+  const [uploadError, setUploadError] = useState(null); // Lỗi upload
   const { postId } = useParams();
 
   const navigate = useNavigate();
@@ -60,28 +62,36 @@ export default function UpdatePost() {
       const fileName = new Date().getTime() + "-" + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+
+      // Thêm đoạn này để theo dõi tiến trình upload
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
+          setUploadProgress(progress.toFixed(0)); // Cập nhật tiến trình upload
         },
         (error) => {
-          setImageUploadError("Please select an image");
-          setImageUploadProgress(null);
+          setUploadError("File upload failed");
+          setUploadProgress(null);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
+            setUploadProgress(null);
+            setUploadError(null);
+
+            // Kiểm tra loại file để lưu vào formData
+            if (file.type.startsWith("image/")) {
+              setFormData({ ...formData, image: downloadURL }); // Lưu đường dẫn ảnh
+            } else {
+              setFormData({ ...formData, document: downloadURL }); // Lưu đường dẫn tài liệu
+            }
           });
         }
       );
     } catch (error) {
       setImageUploadError("Image upload failed");
-      setImageUploadProgress(null);
+      setUploadProgress(null);
       console.log(error);
     }
   };
@@ -122,7 +132,7 @@ export default function UpdatePost() {
   };
 
   return (
-    <div className="p-3 max-2-3xl mx-auto min-h-screen">
+    <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Update post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
@@ -152,7 +162,7 @@ export default function UpdatePost() {
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
             type="file"
-            accept="image/*"
+            accept="image/*,.pdf,.doc,.docx"
             onChange={(e) => setFile(e.target.files[0])}
           />
           <Button
@@ -161,17 +171,17 @@ export default function UpdatePost() {
             size="sm"
             outline
             onClick={handleUploadImage}
-            disabled={imageUploadProgress}
+            disabled={uploadProgress} // Disable button khi đang upload
           >
-            {imageUploadProgress ? (
+            {uploadProgress ? (
               <div className="w-16 h-16">
                 <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
+                  value={uploadProgress}
+                  text={`${uploadProgress || 0}%`}
                 />
               </div>
             ) : (
-              "Upload Image"
+              "Upload"
             )}
           </Button>
         </div>
@@ -182,6 +192,18 @@ export default function UpdatePost() {
             alt="update"
             className="w-full h-72 object-cover "
           />
+        )}
+        {formData.document && (
+          <div className="p-3 max-w-2xl mx-auto w-full">
+            <a
+              href={formData.document}
+              className="text-blue-500 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {formData.document.split("/").pop()}
+            </a>
+          </div>
         )}
         <ReactQuill
           theme="snow"

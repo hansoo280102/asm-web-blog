@@ -180,7 +180,6 @@ export default function PostPage() {
         dangerouslySetInnerHTML={{ __html: post && post.content }}
       ></div>
 
-      {/* Hiển thị document nếu có */}
       {post && post.document && (
         <div className="p-3 max-w-2xl mx-auto w-full">
           <a
@@ -189,7 +188,7 @@ export default function PostPage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Download this document
+            {post.document.split("/").pop()}
           </a>
         </div>
       )}
